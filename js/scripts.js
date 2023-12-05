@@ -39,12 +39,27 @@ function getRandomNum() {
     return Math.floor(Math.random() * 6) + 1;
 }
 
-//UI Logic
+//UI Logic Player 1
 function getScoreOne() {
     const playBtnOne = document.getElementById("playBtnOne");
     const diceResultOne = document.getElementById("diceResultOne");
     const roundScoreOne = document.getElementById("roundScoreOne");
     const totalScoreOne = document.getElementById("totalScoreOne");
+    const holdBtnOne = document.getElementById("holdBtnOne");
+    const playBtnTwo = document.getElementById("playBtnTwo");
+
+    holdBtnOne.addEventListener("click", e => {
+        e.preventDefault();
+        player1.getTotal(player1.roundScore());
+
+        playBtnOne.style.display = "none";
+        holdBtnOne.style.display = "none";
+
+        playBtnTwo.style.display = "block";
+        holdBtnTwo.style.display = "block";
+
+    });
+
     playBtnOne.addEventListener("click", e => {
         e.preventDefault();
         const randomNumber = getRandomNum();
@@ -56,11 +71,65 @@ function getScoreOne() {
         diceResultOne.innerText = randomNumber;
         roundScoreOne.innerText = player1.roundScore();
         totalScoreOne.innerText = player1.totalScore();
+
+        if (randomNumber === 1) {
+            playBtnOne.style.display = "none";
+            playBtnTwo.style.display = "none";
+
+            playBtnTwo.style.display = "block";
+        }
+    })
+}
+
+
+
+//UI Logic Player 2
+function getScoreTwo() {
+    const playBtnTwo = document.getElementById("playBtnTwo");
+    const diceResultTwo = document.getElementById("diceResultTwo");
+    const roundScoreTwo = document.getElementById("roundScoreTwo");
+    const totalScoreTwo = document.getElementById("totalScoreTwo");
+    const holdBtnTwo = document.getElementById("holdBtnTwo");
+
+    holdBtnTwo.addEventListener("click", e => {
+        e.preventDefault();
+        player2.getTotal(player2.roundScore());
+
+        playBtnTwo.style.display = "none";
+        holdBtnTwo.style.display = "none";
+
+        const playBtnOne = document.getElementById("playBtnOne");
+        playBtnOne.style.display = "block";
+        holdBtnOne.style.display = "block";
+    });
+
+    playBtnTwo.addEventListener("click", e => {
+        e.preventDefault();
+        const randomNumber = getRandomNum();
+        // 1) present it to UI / 2) add this to the PicDice score + result[];
+        player2.score = randomNumber;
+        player2.getRound(randomNumber);
+        player2.getTotal(randomNumber);
+
+        diceResultTwo.innerText = randomNumber;
+        roundScoreTwo.innerText = player2.roundScore();
+        totalScoreTwo.innerText = player2.totalScore();
+
+        if (randomNumber === 1) {
+            playBtnTwo.style.display = "none";
+            holdBtnTwo.style.display = "none";
+
+            const playBtnOne = document.getElementById("playBtnOne");
+            playBtnOne.style.display = "block";
+        } else {
+            holdBtnTwo.style.display = "block";
+        }
     })
 }
 
 window.onload = () => {
     getScoreOne();
+    getScoreTwo();
 }
 
 
