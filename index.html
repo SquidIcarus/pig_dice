@@ -13,24 +13,27 @@
     <h1>Pig Dice!</h1>
     <form id="playerOne">
         <h3>Player 1</h3>
-        <div id="resultOne" class="hidden">
+        <div id="resultOne">
             <p>You rolled: <span id="diceResultOne"></span></p>
             <p>Your round score: <span id="roundScoreOne"></span></p>
             <p>Your total score: <span id="totalScoreOne"></span></p>
         </div>
-        <button id="playBtnOne">Play</button>
-        <button id="holdBtnOne">Hold</button>
+        <button id="playBtnOne" class="buttonsPlayerOne">Roll</button>
+        <button id="holdBtnOne" class="buttonsPlayerOne">Hold</button>
     </form>
     <form id="playerTwo">
         <h3>Player 2</h3>
-        <div id="resultTwo" class="hidden">
+        <div id="resultTwo">
             <p>You rolled: <span id="diceResultTwo"></span></p>
             <p>Your round score: <span id="roundScoreTwo"></span></p>
             <p>Your total score: <span id="totalScoreTwo"></span></p>
         </div>
-        <button id="playBtnTwo">Play</button>
-        <button id="holdBtnTwo">Hold</button>
+        <button id="playBtnTwo" class="buttonsPlayerTwo">Roll</button>
+        <button id="holdBtnTwo" class="buttonsPlayerTwo">Hold</button>
     </form>
+    <div id="winner" class="hidden">
+        <p>Congratulations! <span id="winnerName"></span> is the winner!</p>
+    </div>
 </body>
 
 </html>

@@ -8,122 +8,126 @@ function PigDice(player, score) {
     this.total = [];
 }
 
-const player1 = new PigDice("player1", 0);
-const player2 = new PigDice("player2", 0);
-//console.log(player1)
-
 PigDice.prototype.getRound = function (num) {
     if (num === 1) {
         this.round = [];
     } else {
         this.round.push(num);
     }
-    return this.round;
+    return this.round.reduce((a, b) => a + b, 0);
 }
 PigDice.prototype.getTotal = function (num) {
-    if (num !== 1) {
-        this.total.push(num);
-    }
-    return this.total;
+    const roundScore = this.getRound(num) - num;
+    this.total.push(roundScore);
+    return this.total.reduce((a, b) => a + b, 0);
 }
-PigDice.prototype.roundScore = function () {
-    const numArr = this.round;
-    return numArr.reduce((a, b) => a + b, 0);
-}
-PigDice.prototype.totalScore = function () {
-    const totalArr = this.total;
-    return totalArr.reduce((a, b) => a + b, 0);
-}
-
 function getRandomNum() {
     return Math.floor(Math.random() * 6) + 1;
 }
 
-//UI Logic Player 1
+// UI logic: 
+// Button disable - enable functions 
+function disableBtn(buttons) {
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+    }
+}
+function enableBtn(buttons) {
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = false;
+    }
+}
+function btnAbility(num, toBeDisabled, toBeEnabled) {
+    if (num === 1) {
+        disableBtn(toBeDisabled);
+        enableBtn(toBeEnabled);
+    } else {
+        disableBtn(toBeEnabled);
+        enableBtn(toBeDisabled);
+    }
+} // Only for 'Play' buttons 
+
+// A function that decides who won the game. 
+function winnerPost(totalScore, playerName) {
+    // Elements you'd need for this function to work: 
+    // 1) Total Score >= 100 
+    // 2) When clicked 'hold button' this function will activate -> we're including this function within 'holdBtnOne event listener' later. 
+    // 3) This will return: appending the Name to the 'winner' div. 
+    const winnerName = document.getElementById("winnerName");
+    const winnerDiv = document.getElementById("winner");
+
+    if (totalScore >= 100) {
+        winnerName.innerText = playerName;
+        winnerDiv.classList.remove("hidden");
+    } else {
+        return;
+    }
+}
+
+// Player 1
 function getScoreOne() {
     const playBtnOne = document.getElementById("playBtnOne");
     const diceResultOne = document.getElementById("diceResultOne");
     const roundScoreOne = document.getElementById("roundScoreOne");
     const totalScoreOne = document.getElementById("totalScoreOne");
     const holdBtnOne = document.getElementById("holdBtnOne");
-    const playBtnTwo = document.getElementById("playBtnTwo");
+    const buttonsPlayerOne = document.getElementsByClassName("buttonsPlayerOne");
+    const buttonsPlayerTwo = document.getElementsByClassName("buttonsPlayerTwo");
+    const player1 = new PigDice("Player1", 0);
 
     holdBtnOne.addEventListener("click", e => {
         e.preventDefault();
-        player1.getTotal(player1.roundScore());
-
-        playBtnOne.style.display = "none";
-        holdBtnOne.style.display = "none";
-
-        playBtnTwo.style.display = "block";
-        holdBtnTwo.style.display = "block";
-
+        const totalScore = player1.getTotal(player1.score);
+        totalScoreOne.innerText = totalScore;
+        disableBtn(buttonsPlayerOne);
+        enableBtn(buttonsPlayerTwo);
+        winnerPost(totalScore, player1.player);
+        //refreshing 'round score' for object & on UI: 
+        player1.round = [];
+        roundScoreOne.innerText = '';
+        diceResultOne.innerText = '';
     });
-
     playBtnOne.addEventListener("click", e => {
         e.preventDefault();
-        const randomNumber = getRandomNum();
-        // 1) present it to UI / 2) add this to the PicDice score + result[];
-        player1.score = randomNumber;
-        player1.getRound(randomNumber);
-        player1.getTotal(randomNumber);
-
-        diceResultOne.innerText = randomNumber;
-        roundScoreOne.innerText = player1.roundScore();
-        totalScoreOne.innerText = player1.totalScore();
-
-        if (randomNumber === 1) {
-            playBtnOne.style.display = "none";
-            playBtnTwo.style.display = "none";
-
-            playBtnTwo.style.display = "block";
-        }
-    })
+        player1.score = getRandomNum();
+        const roundScore = player1.getRound(player1.score);
+        diceResultOne.innerText = player1.score;
+        roundScoreOne.innerText = roundScore;
+        btnAbility(player1.score, buttonsPlayerOne, buttonsPlayerTwo);
+    });
 }
-
-
-
-//UI Logic Player 2
+// Player 2
 function getScoreTwo() {
     const playBtnTwo = document.getElementById("playBtnTwo");
     const diceResultTwo = document.getElementById("diceResultTwo");
     const roundScoreTwo = document.getElementById("roundScoreTwo");
     const totalScoreTwo = document.getElementById("totalScoreTwo");
     const holdBtnTwo = document.getElementById("holdBtnTwo");
+    const buttonsPlayerOne = document.getElementsByClassName("buttonsPlayerOne");
+    const buttonsPlayerTwo = document.getElementsByClassName("buttonsPlayerTwo");
+    const player2 = new PigDice("Player2", 0);
 
     holdBtnTwo.addEventListener("click", e => {
         e.preventDefault();
-        player2.getTotal(player2.roundScore());
-
-        playBtnTwo.style.display = "none";
-        holdBtnTwo.style.display = "none";
-
-        const playBtnOne = document.getElementById("playBtnOne");
-        playBtnOne.style.display = "block";
-        holdBtnOne.style.display = "block";
+        const totalScore = player2.getTotal(player2.score);
+        totalScoreTwo.innerText = totalScore;
+        disableBtn(buttonsPlayerTwo);
+        enableBtn(buttonsPlayerOne);
+        winnerPost(totalScore, player2.player);
+        //refreshing 'round score' for object & on UI: 
+        player2.round = [];
+        roundScoreTwo.innerText = '';
+        diceResultTwo.innerText = '';
     });
 
     playBtnTwo.addEventListener("click", e => {
         e.preventDefault();
-        const randomNumber = getRandomNum();
-        // 1) present it to UI / 2) add this to the PicDice score + result[];
-        player2.score = randomNumber;
-        player2.getRound(randomNumber);
-        player2.getTotal(randomNumber);
+        player2.score = getRandomNum();
+        const roundScore = player2.getRound(player2.score);
 
-        diceResultTwo.innerText = randomNumber;
-        roundScoreTwo.innerText = player2.roundScore();
-        totalScoreTwo.innerText = player2.totalScore();
-
-        if (randomNumber === 1) {
-            playBtnTwo.style.display = "none";
-            holdBtnTwo.style.display = "none";
-
-            const playBtnOne = document.getElementById("playBtnOne");
-            playBtnOne.style.display = "block";
-        } else {
-            holdBtnTwo.style.display = "block";
-        }
+        diceResultTwo.innerText = player2.score;
+        roundScoreTwo.innerText = roundScore;
+        btnAbility(player2.score, buttonsPlayerTwo, buttonsPlayerOne);
     })
 }
 
@@ -131,5 +135,6 @@ window.onload = () => {
     getScoreOne();
     getScoreTwo();
 }
+
 
 
